@@ -1,5 +1,5 @@
 {
-    "name": "natfisc/mysqli-wrapper",
+    "name": "nafisc/mysqli-wrapper",
     "description": "A wrapper class for MySqli connections",
     "type": "library",
     "license": "MIT",
