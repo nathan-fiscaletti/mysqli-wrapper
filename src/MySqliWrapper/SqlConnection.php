@@ -164,7 +164,7 @@ final class SqlConnection
     {
         $ret = false;
         $this->closeSQL();
-        $this->sql = @new mysqli(
+        $this->sql = @new \mysqli(
             $this->host,
             $this->username,
             $this->password,
