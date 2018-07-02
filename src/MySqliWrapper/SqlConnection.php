@@ -1,7 +1,5 @@
 <?php
 
-namespace MySqliWrapper;
-
 /**
  * Class used for handling a MySql connection.
  */
@@ -80,11 +78,11 @@ final class SqlConnection
      * @param int $port
      */
     public function __construct(
-        string $host = null,
-        string $username = null,
-        string $password = null,
-        string $database = null,
-        int $port = null
+        $host = null,
+        $username = null,
+        $password = null,
+        $database = null,
+        $port = null
     ) {
         $this->host = $host;
         $this->username = $username;
@@ -108,44 +106,22 @@ final class SqlConnection
      * @param array   $binds
      * @param bool $return
      *
-     * @return \mysqli_result
+     * @return ResultSet
      * @throws \Exception
      */
     public function executeSql($query, $binds = [], $return = false)
     {
         if (! $this->is_open) {
             if (! $this->openSql()) {
-                throw new \Exception("Failed to open Sql Connection.");
+                throw new \Exception("Unable to open SQL Connection.");
             }
         }
-
         $id = $this->prepareStatement(count($this->prepared_statements), $query);
         $ret = null;
         if ($id !== null) {
             $ret = $this->executePreparedStatement($id, $binds, $return);
         }
-
         return $ret;
-    }
-
-    /**
-     * Returns the auto generated id used in the last query.
-     *
-     * @return int
-     */
-    public function getLastInsertID()
-    {
-        return $this->insert_id;
-    }
-
-    /**
-     * Retrieves the MySqli object associated with the connection.
-     *
-     * @return MySqli
-     */
-    public function getSql()
-    {
-        return $this->sql;
     }
 
     /**
@@ -169,18 +145,6 @@ final class SqlConnection
     }
 
     /**
-     * Retrieves a list of table names for this database.
-     *
-     * @return array
-     */
-    public function getTables()
-    {
-        $result = $this->executeSql('SHOW TABLES', [], true);
-
-        return array_column(mysqli_fetch_all($result), 0);
-    }
-
-    /**
      * Closes the Sql connection.
      */
     private function closeSql()
@@ -197,18 +161,20 @@ final class SqlConnection
     private function openSql()
     {
         $ret = false;
-
         $this->closeSQL();
-
-        $this->sql = @new \mysqli($this->host, $this->username, $this->password, $this->database, $this->port);
-
+        $this->sql = @new mysqli(
+            $this->host,
+            $this->username,
+            $this->password,
+            $this->database,
+            $this->port
+        );
         if ($this->sql->connect_errno) {
             $this->sql = null;
         } else {
             $this->is_open = true;
             $ret = true;
         }
-
         return $ret;
     }
 
@@ -218,7 +184,7 @@ final class SqlConnection
      * @param string  $prepareTitle
      * @param bool $return
      *
-     * @return \mysqli_result
+     * @return bool|array|null
      */
     private function executePreparedStatement($prepareTitle, $binds = [], $return = false)
     {
@@ -228,7 +194,6 @@ final class SqlConnection
         foreach ($binds as $key => $value) {
             $tmp[$key] = &$binds[$key];
         }
-
         if (count($binds) > 0) {
             call_user_func_array([$statement, 'bind_param'], $tmp);
             if ($this->sql->errno) {
@@ -239,17 +204,13 @@ final class SqlConnection
                 );
             }
         }
-
         $ret = $statement->execute();
-
         if ($statement->errno) {
             trigger_error('Error while executing Prepared Statement: '.$statement->error, E_USER_WARNING);
         }
-
         $this->insert_id = $statement->insert_id;
-
         if ($return) {
-            $ret = $statement->get_result();
+            $ret = $this->stmt_get_result($statement);
             if ($statement->errno) {
                 trigger_error(
                     'Error while retreiving result set from MySQL Prepared Statement: '.
@@ -258,10 +219,31 @@ final class SqlConnection
                 );
             }
         }
-
         $this->removePreparedStatement($prepareTitle);
 
         return $ret;
+    }
+
+    /**
+     * This function is used instead of the mysqlnd driver function.
+     *
+     * @param  mysqli_stmt $statement
+     * @return array
+     */
+    function stmt_get_result( $statement ) {
+        $result = array();
+        $statement->store_result();
+        for ( $i = 0; $i < $statement->num_rows; $i++ ) {
+            $metadata = $statement->result_metadata();
+            $params = array();
+            while ( $field = $metadata->fetch_field() ) {
+                $params[] = &$result[$i][$field->name];
+            }
+            call_user_func_array([$statement, 'bind_result'], $params);
+            $statement->fetch();
+        }
+
+        return $result;
     }
 
     /**
@@ -276,13 +258,11 @@ final class SqlConnection
     {
         $ret = null;
         $this->prepared_statements[$prepareTitle] = $this->sql->prepare($prepareBody);
-
         if ($this->sql->errno) {
             trigger_error('Error while Preparing SQL: '.$this->sql->error, E_USER_WARNING);
         } else {
             $ret = $prepareTitle;
         }
-
         return $ret;
     }
 
@@ -296,7 +276,7 @@ final class SqlConnection
         $this->prepared_statements[$prepareTitle]->close();
         unset($this->prepared_statements[$prepareTitle]);
     }
-
+    
     /**
      * Retrieves a prepared statement from the storage array.
      *
