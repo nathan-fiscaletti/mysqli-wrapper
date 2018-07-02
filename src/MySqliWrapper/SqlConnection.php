@@ -1,6 +1,6 @@
 <?php
 
-namespace \MySqliWrapper;
+namespace MySqliWrapper;
 
 /**
  * Class used for handling a MySql connection.
