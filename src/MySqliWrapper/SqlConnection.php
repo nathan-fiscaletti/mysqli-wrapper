@@ -290,4 +290,19 @@ final class SqlConnection
     {
         return $this->prepared_statements[$prepareTitle];
     }
+
+    /**
+     * Hide debug output to mask sensitive variables.
+     *
+     * @return array
+     */
+    public function __debugInfo() {
+        $result = get_object_vars($this);
+        unset($result['username']);
+        unset($result['password']);
+        unset($result['database']);
+        unset($result['host']);
+        unset($result['port']);
+        return $result;
+    }
 }
