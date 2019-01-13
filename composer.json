@@ -12,7 +12,10 @@
     "autoload": {
         "psr-4": {
             "MySqliWrapper\\": "src/MySqliWrapper"
-        }
+        },
+        "files": [
+            "src/MySqliWrapper/Functions.php"
+        ]
     },
     "require": {}
 }
