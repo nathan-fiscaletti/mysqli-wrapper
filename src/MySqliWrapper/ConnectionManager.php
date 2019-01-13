@@ -4,8 +4,19 @@ namespace MySqliWrapper;
 
 class ConnectionManager
 {
+    /**
+     * The connections currently active.
+     * 
+     * @var array
+     */
     private static $connections = [];
 
+    /**
+     * Register a connection.
+     * 
+     * @param string                       $name
+     * @param \MySqliWrapper\SqlConnection $connection
+     */
     public static function register($name, $connection)
     {
         if (! ($connection instanceof \MySqliWrapper\SqlConnection)) {
@@ -15,6 +26,13 @@ class ConnectionManager
         self::$connections[$name] = $connection;
     }
 
+    /**
+     * Retrieve a connection based on it's name.
+     * 
+     * @param string $name
+     * 
+     * @return \MySqliWrapper\SqlConnection
+     */
     public static function get($name)
     {
         if (! isset(self::$connections[$name])) {
@@ -24,6 +42,11 @@ class ConnectionManager
         return self::$connections[$name];
     }
 
+    /**
+     * Retrieve the first connection.
+     * 
+     * @return \MySqliWrapper\SqlConnection
+     */
     public static function first()
     {
         return self::$connections[
@@ -31,17 +54,29 @@ class ConnectionManager
         ];
     }
 
-    public static function table($name, $config = [])
+    /**
+     * Create a query builder using the first connection.
+     * 
+     * @param string $table
+     * @param array  $config
+     * 
+     * @return \MySqliWrapper\QueryBuilder
+     */
+    public static function table($table, $config = [])
     {
-        return self::$connections[
-            array_keys(self::$connections)[0]
-        ]->table($name, $config);
+        return self::first()->table($table, $config);
     }
 
-    public static function model($name, $config = [])
+    /**
+     * Retrieve a Model using the first connection.
+     * 
+     * @param string $table
+     * @param array  $config
+     * 
+     * @return \MySqliWrapper\Model
+     */
+    public static function model($table, $config = [])
     {
-        return self::$connections[
-            array_keys(self::$connections)[0]
-        ]->model($name, $config);
+        return self::first()->model($table, $config);
     }
 }

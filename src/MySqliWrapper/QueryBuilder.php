@@ -4,12 +4,46 @@ namespace MySqliWrapper;
 
 class QueryBuilder
 {
+    /**
+     * The name of the connection to use.
+     * 
+     * @var string $connection
+     */
     protected $connection;
+
+    /**
+     * The table on which to be building this query.
+     * 
+     * @var string $table
+     */
     protected $table;
+
+    /**
+     * The configuration to pass to any generated models.
+     * 
+     * @var array $config
+     */
     private $config;
 
+    /**
+     * The query that will be executed.
+     * 
+     * @var string $query
+     */
     private $query = '';
+
+    /**
+     * The bind type string.
+     * 
+     * @var string $bindStr
+     */
     private $bindStr = '';
+
+    /**
+     * The bind values.
+     * 
+     * @var array $binds
+     */
     private $binds = [];
 
     /**

@@ -1,4 +1,4 @@
-## Mysqli Wrapper
+# Mysqli Wrapper
 
 ### A simple ORM for PHP.
 
