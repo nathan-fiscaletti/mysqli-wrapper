@@ -1,15 +1,14 @@
 <?php
 
-if (! function_exists('mysqliwrapper__preparePropertyValue')) {
-    function mysqliwrapper__preparePropertyValue($value)
-    {
-        return (is_string($value))
-            ? "'$value'"
-            : "$value";
-    }
-}
-
 if (! function_exists('mysqliwrapper__asQueryBindType')) {
+    /**
+     * Retrieve the corresponding query bind type string
+     * based on the type of the value.
+     * 
+     * @param mixed $value
+     * 
+     * @return string
+     */
     function mysqliwrapper__asQueryBindType($value)
     {
         if (is_string($value))
@@ -26,6 +25,13 @@ if (! function_exists('mysqliwrapper__asQueryBindType')) {
 }
 
 if (! function_exists('mysqliwrapper__selectableToString')) {
+    /**
+     * Convert a selectable parameter to a MySql string.
+     * 
+     * @param array|string $what
+     * 
+     * @return string
+     */
     function mysqliwrapper__selectableToString($what) {
         if (is_array($what)) {
             return implode(','.PHP_EOL, $what);
