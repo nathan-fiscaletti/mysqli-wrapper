@@ -55,7 +55,7 @@ $results = $connection->executeSql(
 ## Query Builder
 
 ```php
-$connection->table('servers')
+echo $connection->table('servers')
            ->select(['servers.id', 'servers.ipv4', 'server_stats.uptime'])
            ->leftJoin('server_stats', function($join) {
                $join->on('servers.id', '=', 'server_stats.server_id');
@@ -64,13 +64,30 @@ $connection->table('servers')
            ->when(
                $onlyHighUptime, 
                function($query) {
-                   $query->andWhere('uptime', '>', 500);
+                   $query->and('server_stats.uptime', '>', 500);
                },
                function($query) {
-                   $query->andWhere('uptime', '<', 500);
+                   $query->and('server_stats.uptime', '<', 500);
                }
            )
-           ->fetch();
+           ->getRawQuery();
+
+// . . . 
+
+// Output:
+/*
+
+SELECT
+servers.id,
+servers.ipv4,
+server_stats.uptime
+FROM `servers`
+LEFT JOIN `server_stats`
+ON servers.id = server_stats.server_id
+WHERE servers.ipv4 = ?
+AND uptime < ?
+
+*/
 ```
 
 ## Models
