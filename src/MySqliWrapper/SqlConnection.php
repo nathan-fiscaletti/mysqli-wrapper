@@ -71,6 +71,11 @@ final class SqlConnection
     private $port;
 
     /**
+     * The name of this Connection in the ConnectionManager.
+     */
+    public $name = null;
+
+    /**
      * Create a new SqlConnection instance.
      *
      * @param string  $host
@@ -127,6 +132,16 @@ final class SqlConnection
     }
 
     /**
+     * Retrieve the last insert ID.
+     * 
+     * @return int
+     */
+    public function lastInsertId()
+    {
+        return $this->insert_id;
+    }
+
+    /**
      * Escapes a string for sql injection.
      *
      * @param string $str
@@ -135,15 +150,11 @@ final class SqlConnection
     {
         if (! $this->is_open) {
             if (! $this->openSql()) {
-                trigger_error(
-                    'Failed one or more custom databases. Please check SqlServers.php.',
-                    E_USER_WARNING
-                );
-                exit();
+                throw new \Exception('Failed to open database connection.');
             }
         }
 
-        return $this->sql->real_escape_string(strip_tags($str));
+        return $this->sql->real_escape_string($str);
     }
 
     /**
@@ -199,25 +210,26 @@ final class SqlConnection
         if (count($binds) > 0) {
             call_user_func_array([$statement, 'bind_param'], $tmp);
             if ($this->sql->errno) {
-                trigger_error(
+                throw new \Exception(
                     'Error while applying binds to SQL Prepared Statement: '.
-                    $this->sql->error,
-                    E_USER_WARNING
+                    $this->sql->error
                 );
             }
         }
         $ret = $statement->execute();
         if ($statement->errno) {
-            trigger_error('Error while executing Prepared Statement: '.$statement->error, E_USER_WARNING);
+            throw new \Exception(
+                'Error while executing Prepared Statement: '.
+                $statement->error
+            );
         }
         $this->insert_id = $statement->insert_id;
         if ($return) {
             $ret = $this->stmt_get_result($statement);
             if ($statement->errno) {
-                trigger_error(
+                throw new \Exception(
                     'Error while retreiving result set from MySQL Prepared Statement: '.
-                    $statement->error,
-                    E_USER_WARNING
+                    $statement->error
                 );
             }
         }
@@ -261,7 +273,7 @@ final class SqlConnection
         $ret = null;
         $this->prepared_statements[$prepareTitle] = $this->sql->prepare($prepareBody);
         if ($this->sql->errno) {
-            trigger_error('Error while Preparing SQL: '.$this->sql->error, E_USER_WARNING);
+            throw new \Exception('Error while Preparing SQL: '.$this->sql->error);
         } else {
             $ret = $prepareTitle;
         }
@@ -304,5 +316,24 @@ final class SqlConnection
         unset($result['host']);
         unset($result['port']);
         return $result;
+    }
+
+    /**
+     * Retrieve an instance of a Model based on a table.
+     * 
+     * @return \MySqliWrapper\Model
+     */
+    public function model($table, $config = []) {
+        return new \MySqliWrapper\Model($this->name, $table, $config);
+    }
+
+    /**
+     * Retrieve a Query builder object for the specified table.
+     * 
+     * @return \MySqliWrapper\QueryBuilder
+     */
+    public function table($table, $config = [])
+    {
+        return new \MySqliWrapper\QueryBuilder($this->name, $table, $config);
     }
 }
