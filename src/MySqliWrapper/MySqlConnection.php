@@ -5,7 +5,7 @@ namespace MySqliWrapper;
 /**
  * Class used for handling a MySql connection.
  */
-final class SqlConnection
+final class MySqlConnection
 {
     /**
      * The prepared statements that are queue'd for execution.
@@ -76,7 +76,7 @@ final class SqlConnection
     public $name = null;
 
     /**
-     * Create a new SqlConnection instance.
+     * Create a new MySqlConnection instance.
      *
      * @param string  $host
      * @param string  $username
@@ -159,6 +159,8 @@ final class SqlConnection
      * Escapes a string for sql injection.
      *
      * @param string $str
+     * 
+     * @return string
      */
     public function escapeString($str)
     {
