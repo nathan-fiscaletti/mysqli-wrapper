@@ -86,7 +86,7 @@ class Query
     {
         foreach ($parameters as $parameter)
         {
-            $this->binds[] = $parameter;
+            $this->binds[] = \MySqliWrapper\DataBase::get($this->connection)->escapeString($parameter);
             $this->bindTypes .= mysqliwrapper__asQueryBindType($parameter);
         }
 

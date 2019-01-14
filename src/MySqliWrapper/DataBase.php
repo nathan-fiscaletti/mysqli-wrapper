@@ -15,12 +15,12 @@ final class DataBase
      * Register a connection.
      * 
      * @param string                       $name
-     * @param \MySqliWrapper\SqlConnection $connection
+     * @param \MySqliWrapper\MySqlConnection $connection
      */
     public static function register($name, $connection)
     {
-        if (! ($connection instanceof \MySqliWrapper\SqlConnection)) {
-            throw new \Exception('Type is not \MySqliWrapper\SqlConnection');
+        if (! ($connection instanceof \MySqliWrapper\MySqlConnection)) {
+            throw new \Exception('Type is not \MySqliWrapper\MySqlConnection');
         }
         $connection->name = $name;
         self::$connections[$name] = $connection;
@@ -31,7 +31,7 @@ final class DataBase
      * 
      * @param string $name
      * 
-     * @return \MySqliWrapper\SqlConnection
+     * @return \MySqliWrapper\MySqlConnection
      */
     public static function get($name)
     {
@@ -45,7 +45,7 @@ final class DataBase
     /**
      * Retrieve the first connection.
      * 
-     * @return \MySqliWrapper\SqlConnection
+     * @return \MySqliWrapper\MySqlConnection
      */
     public static function first()
     {
