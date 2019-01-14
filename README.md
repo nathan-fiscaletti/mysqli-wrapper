@@ -27,7 +27,7 @@ DB::register(
 $user = DB::get('main')
             ->table('users')
             ->where('name', '=', 'Nathan')
-            ->get();
+            ->getFirst();
 
 $user->age = 10;
 $user->save();
