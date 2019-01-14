@@ -83,13 +83,13 @@ class Model
             if (property_exists($this, $property)) {
                 $this->{$property} = $value;
             } else {
-                throw new \Exception("Unknown configuration entry '$property' during ".get_class($this)." generation.");
+                throw new \Exception("Unknown configuration entry '$property' during ".get_class($this).' generation.');
             }
         }
     }
 
     /**
-     * Retrieve a QueryBuilder for the Model
+     * Retrieve a QueryBuilder for the Model.
      *
      * @return \MySqliWrapper\QueryBuilder
      */
@@ -120,17 +120,18 @@ class Model
     public function save()
     {
         if (! $this->savable) {
-            throw new \Exception("Cannot save ".get_class($this)." instance due to unknown ID.");
+            throw new \Exception('Cannot save '.get_class($this).' instance due to unknown ID.');
         }
 
         if ($this->saved()) {
-            return 
+            return
                 $this->update($this->data)
                     ->where($this->id_column, '=', $this->id)
                     ->execute();
         } else {
             if ($this->insert($this->data)->execute()) {
                 $this->id = $this->lastInsertId();
+
                 return true;
             }
         }
@@ -158,7 +159,7 @@ class Model
      */
     public function dataFor($column, $withPrefix = true)
     {
-        return $this->data[($withPrefix?$this->column_prefix:'').$column];
+        return $this->data[($withPrefix ? $this->column_prefix : '').$column];
     }
 
     /**
@@ -171,7 +172,7 @@ class Model
      */
     public function dataExists($column, $withPrefix = true)
     {
-        return isset($this->data[($withPrefix?$this->column_prefix:'').$column]);
+        return isset($this->data[($withPrefix ? $this->column_prefix : '').$column]);
     }
 
     /**
@@ -185,6 +186,7 @@ class Model
     public static function __callStatic($function, $parameters)
     {
         $class = get_called_class();
+
         return (new $class())->{$function}(...$parameters);
     }
 
