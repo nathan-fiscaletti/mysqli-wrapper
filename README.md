@@ -1,6 +1,6 @@
 # Mysqli Wrapper
 
-### A simple ORM for PHP.
+### A simple ORM for MySql and PHP.
 
 > composer require nafisc/mysqli-wrapper
 
