@@ -6,15 +6,15 @@ final class DataBase
 {
     /**
      * The connections currently active.
-     * 
+     *
      * @var array
      */
     private static $connections = [];
 
     /**
      * Register a connection.
-     * 
-     * @param string                       $name
+     *
+     * @param string                         $name
      * @param \MySqliWrapper\MySqlConnection $connection
      */
     public static function register($name, $connection)
@@ -28,9 +28,9 @@ final class DataBase
 
     /**
      * Retrieve a connection based on it's name.
-     * 
+     *
      * @param string $name
-     * 
+     *
      * @return \MySqliWrapper\MySqlConnection
      */
     public static function get($name)
@@ -44,7 +44,7 @@ final class DataBase
 
     /**
      * Retrieve the first connection.
-     * 
+     *
      * @return \MySqliWrapper\MySqlConnection
      */
     public static function first()
@@ -56,10 +56,10 @@ final class DataBase
 
     /**
      * Create a query builder using the first connection.
-     * 
+     *
      * @param string $table
      * @param array  $config
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public static function table($table, $config = [])
@@ -69,10 +69,10 @@ final class DataBase
 
     /**
      * Retrieve a Model using the first connection.
-     * 
+     *
      * @param string $table
      * @param array  $config
-     * 
+     *
      * @return \MySqliWrapper\Model
      */
     public static function model($table, $config = [])
