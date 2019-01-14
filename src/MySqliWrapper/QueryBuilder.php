@@ -7,14 +7,14 @@ class QueryBuilder extends \MySqliWrapper\Query
     /**
      * The table on which to be building this query.
      *
-     * @var string $table
+     * @var string
      */
     protected $table;
 
     /**
      * The configuration to pass to any generated models.
      *
-     * @var array $config
+     * @var array
      */
     private $config;
 
@@ -55,15 +55,14 @@ class QueryBuilder extends \MySqliWrapper\Query
 
         $propResult = '(';
         $valResult = '(';
-        foreach ($data as $property => $value)
-        {
+        foreach ($data as $property => $value) {
             $propResult .= ($propResult == '(')
                 ? "$property"
                 : ",$property";
-            
+
             $valResult .= ($valResult == '(')
-                ? "?"
-                : ",?";
+                ? '?'
+                : ',?';
             $this->withQueryParameter($value);
         }
         $propResult .= ')';
@@ -100,7 +99,7 @@ class QueryBuilder extends \MySqliWrapper\Query
             $result .= ($result == '')
                 ? "$property = ?"
                 : ",$property = ?";
-            
+
             $this->withQueryParameter($value);
         }
 
@@ -124,8 +123,7 @@ class QueryBuilder extends \MySqliWrapper\Query
         $query .= "UPDATE `$this->table` SET".PHP_EOL;
         $result = "$column = $column + ?";
         $this->withQueryParameter($amount);
-        foreach ($update as $property => $value)
-        {
+        foreach ($update as $property => $value) {
             $result .= ",$property = ?";
             $this->withQueryParameter($value);
         }
@@ -380,7 +378,7 @@ class QueryBuilder extends \MySqliWrapper\Query
      * Executes the given Closure when the first parameter is true.
      * If the first parameter is false, the Closure will not be executed.
      * You may pass another Closure as the third parameter to the when method.
-     * This Closure will execute if the first parameter evaluates as false. 
+     * This Closure will execute if the first parameter evaluates as false.
      *
      * @param bool     $value
      * @param \closure $true
@@ -522,16 +520,16 @@ class QueryBuilder extends \MySqliWrapper\Query
     public function first()
     {
         $all = $this->get();
-        if (sizeof($all) > 0)
+        if (count($all) > 0) {
             return $all[0];
-
-        return null;
+        }
     }
 
     /**
      * Handle the debug print for this object.
      */
-    public function __debugInfo() {
+    public function __debugInfo()
+    {
         return [
             'query' => $this->getRawQuery(false),
             'bind_types' => $this->getBindTypes(),

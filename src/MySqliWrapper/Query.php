@@ -28,7 +28,7 @@ class Query
     /**
      * The name of the connection to use.
      *
-     * @var string $connection
+     * @var string
      */
     protected $connection;
 
@@ -43,7 +43,7 @@ class Query
     }
 
     /**
-     * Append to or set the Query
+     * Append to or set the Query.
      *
      * @param string $query
      * @param bool   $append
@@ -52,10 +52,11 @@ class Query
      */
     public function raw($query, $append = true)
     {
-        if ($append)
+        if ($append) {
             $this->query .= $query;
-        else
+        } else {
             $this->query = $query;
+        }
 
         return $this;
     }
@@ -84,8 +85,7 @@ class Query
      */
     public function withQueryParameters($parameters)
     {
-        foreach ($parameters as $parameter)
-        {
+        foreach ($parameters as $parameter) {
             $this->binds[] = \MySqliWrapper\DataBase::get($this->connection)->escapeString($parameter);
             $this->bindTypes .= mysqliwrapper__asQueryBindType($parameter);
         }
@@ -96,7 +96,7 @@ class Query
     /**
      * Retrieve the raw query.
      *
-     * @var bool $withNewLines
+     * @var bool
      *
      * @return string
      */
@@ -175,9 +175,8 @@ class Query
     {
         $all = $this->execute(true);
 
-        if (sizeof($all) > 0)
+        if (count($all) > 0) {
             return $all[0];
-
-        return null;
+        }
     }
 }
