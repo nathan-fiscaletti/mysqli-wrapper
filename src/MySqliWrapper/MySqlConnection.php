@@ -136,7 +136,7 @@ final class MySqlConnection
     {
         if (! $this->is_open) {
             if (! $this->openSql()) {
-                throw new \Exception("Unable to open SQL Connection.");
+                throw new \Exception('Unable to open SQL Connection.');
             }
         }
         $id = $this->prepareStatement(count($this->prepared_statements), $query);
@@ -144,6 +144,7 @@ final class MySqlConnection
         if ($id !== null) {
             $ret = $this->executePreparedStatement($id, $binds, $return);
         }
+
         return $ret;
     }
 
@@ -206,6 +207,7 @@ final class MySqlConnection
             $this->is_open = true;
             $ret = true;
         }
+
         return $ret;
     }
 
@@ -262,13 +264,14 @@ final class MySqlConnection
      * @param  mysqli_stmt $statement
      * @return array
      */
-    function stmt_get_result( $statement ) {
-        $result = array();
+    public function stmt_get_result($statement)
+    {
+        $result = [];
         $statement->store_result();
-        for ( $i = 0; $i < $statement->num_rows; $i++ ) {
+        for ($i = 0; $i < $statement->num_rows; $i++) {
             $metadata = $statement->result_metadata();
-            $params = array();
-            while ( $field = $metadata->fetch_field() ) {
+            $params = [];
+            while ($field = $metadata->fetch_field()) {
                 $params[] = &$result[$i][$field->name];
             }
             call_user_func_array([$statement, 'bind_result'], $params);
@@ -295,6 +298,7 @@ final class MySqlConnection
         } else {
             $ret = $prepareTitle;
         }
+
         return $ret;
     }
 
@@ -308,7 +312,7 @@ final class MySqlConnection
         $this->prepared_statements[$prepareTitle]->close();
         unset($this->prepared_statements[$prepareTitle]);
     }
-    
+
     /**
      * Retrieves a prepared statement from the storage array.
      *
@@ -326,13 +330,15 @@ final class MySqlConnection
      *
      * @return array
      */
-    public function __debugInfo() {
+    public function __debugInfo()
+    {
         $result = get_object_vars($this);
         unset($result['username']);
         unset($result['password']);
         unset($result['database']);
         unset($result['host']);
         unset($result['port']);
+
         return $result;
     }
 
@@ -341,7 +347,8 @@ final class MySqlConnection
      *
      * @return \MySqliWrapper\Model
      */
-    public function model($table, $config = []) {
+    public function model($table, $config = [])
+    {
         return new \MySqliWrapper\Model($this->name, $table, $config);
     }
 
