@@ -6,35 +6,35 @@ class Query
 {
     /**
      * The query.
-     * 
+     *
      * @var string
      */
     private $query = '';
 
     /**
      * The binds.
-     * 
+     *
      * @var array
      */
     private $binds = [];
 
     /**
      * The bind types.
-     * 
+     *
      * @var string
      */
     private $bindTypes = '';
 
     /**
      * The name of the connection to use.
-     * 
+     *
      * @var string $connection
      */
     protected $connection;
 
     /**
      * Construct the QueryBuilder.
-     * 
+     *
      * @param string $connection
      */
     public function __construct($connection)
@@ -44,10 +44,10 @@ class Query
 
     /**
      * Append to or set the Query
-     * 
+     *
      * @param string $query
      * @param bool   $append
-     * 
+     *
      * @return \MySqliWrapper\Query
      */
     public function raw($query, $append = true)
@@ -62,9 +62,9 @@ class Query
 
     /**
      * Add a value to the query binds.
-     * 
+     *
      * @param mixed $value
-     * 
+     *
      * @return \MySqliWrapper\Query
      */
     public function withQueryParameter($value)
@@ -77,9 +77,9 @@ class Query
 
     /**
      * Adds a list of values to the query binds.
-     * 
+     *
      * @param array $parameters
-     * 
+     *
      * @return \MySqliWrapper\Query
      */
     public function withQueryParameters($parameters)
@@ -95,9 +95,9 @@ class Query
 
     /**
      * Retrieve the raw query.
-     * 
+     *
      * @var bool $withNewLines
-     * 
+     *
      * @return string
      */
     public function getRawQuery($withNewLines = true)
@@ -111,9 +111,9 @@ class Query
 
     /**
      * Retrieve the Binds array for the query.
-     * 
+     *
      * @param bool $withBindTypes
-     * 
+     *
      * @return array
      */
     public function getBinds($withBindTypes = true)
@@ -128,7 +128,7 @@ class Query
 
     /**
      * Retrieve the bind types.
-     * 
+     *
      * @return string
      */
     public function getBindTypes()
@@ -138,9 +138,9 @@ class Query
 
     /**
      * Execute the query built by this QueryBuilder.
-     * 
+     *
      * @param bool $return
-     * 
+     *
      * @return mixed
      */
     public function execute($return = false)
@@ -158,7 +158,7 @@ class Query
 
     /**
      * Retrieves an array of rows.
-     * 
+     *
      * @return arrray
      */
     public function fetch()
@@ -168,7 +168,7 @@ class Query
 
     /**
      * Retrieves the first row.
-     * 
+     *
      * @return arrray|null
      */
     public function fetchFirst()

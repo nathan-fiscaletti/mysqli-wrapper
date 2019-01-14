@@ -6,21 +6,21 @@ class QueryBuilder extends \MySqliWrapper\Query
 {
     /**
      * The table on which to be building this query.
-     * 
+     *
      * @var string $table
      */
     protected $table;
 
     /**
      * The configuration to pass to any generated models.
-     * 
+     *
      * @var array $config
      */
     private $config;
 
     /**
      * Construct the QueryBuilder.
-     * 
+     *
      * @param string $connection
      * @param string $table
      * @param array  $config
@@ -34,7 +34,7 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Delete data.
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function delete()
@@ -44,9 +44,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Insert data.
-     * 
+     *
      * @param array $data
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function insert($data)
@@ -76,7 +76,7 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Retrieve the last insert ID from this QueryBuilders Connection object.
-     * 
+     *
      * @return int
      */
     public function lastInsertId()
@@ -86,9 +86,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Update data.
-     * 
+     *
      * @param array $data
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function update($data)
@@ -112,11 +112,11 @@ class QueryBuilder extends \MySqliWrapper\Query
     /**
      * Increment a column by a given amount and
      * optionally update other columns as well.
-     * 
+     *
      * @param string $column
      * @param int    $amount
      * @param array  $update
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function increment($column, $amount = 1, $update = [])
@@ -136,9 +136,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Select specified columns.
-     * 
+     *
      * @param array|string $what
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function select($what = '*')
@@ -150,14 +150,14 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Allows you to write where exists SQL clauses.
-     * 
+     *
      * The whereExists method accepts a Closure argument,
      * which will receive a query builder instance allowing
      * you to define the query that should be placed inside
      * of the "exists" clause.
-     * 
+     *
      * @param \closure $closure
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function whereExists($closure)
@@ -170,11 +170,11 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Add a where clause.
-     * 
+     *
      * @param string $property
      * @param string $operator
      * @param string $value
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function where($property, $operator, $value)
@@ -186,11 +186,11 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Add an OR clause.
-     * 
+     *
      * @param string $property
      * @param string $operator
      * @param string $value
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function or($property, $operator, $value)
@@ -202,11 +202,11 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Add an AND clause.
-     * 
+     *
      * @param string $property
      * @param string $operator
      * @param string $value
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function and($property, $operator, $value)
@@ -218,10 +218,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Join a table.
-     * 
+     *
      * @param string   $table
      * @param \closure $join
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function join($table, $join)
@@ -234,10 +234,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Outer join a table.
-     * 
+     *
      * @param string   $table
      * @param \closure $join
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function outerJoin($table, $join)
@@ -250,10 +250,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Outer join a table.
-     * 
+     *
      * @param string   $table
      * @param \closure $join
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function innerJoin($table, $join)
@@ -266,10 +266,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Left join a table.
-     * 
+     *
      * @param string   $table
      * @param \closure $join
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function leftJoin($table, $join)
@@ -282,10 +282,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Left outer join a table.
-     * 
+     *
      * @param string   $table
      * @param \closure $join
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function leftOuterJoin($table, $join)
@@ -298,10 +298,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Right join a table.
-     * 
+     *
      * @param string   $table
      * @param \closure $join
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function rightJoin($table, $join)
@@ -314,10 +314,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Right outer join a table.
-     * 
+     *
      * @param string   $table
      * @param \closure $join
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function rightOuterJoin($table, $join)
@@ -330,9 +330,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Cross join a table.
-     * 
+     *
      * @param string   $table
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function crossJoin($table)
@@ -342,9 +342,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Add a WHERE clause.
-     * 
+     *
      * @param string $where
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function whereRaw($where)
@@ -354,9 +354,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Add an OR clause.
-     * 
+     *
      * @param string $where
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function orRaw($where)
@@ -366,9 +366,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Add an AND clause.
-     * 
+     *
      * @param string $where
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function andRaw($where)
@@ -381,11 +381,11 @@ class QueryBuilder extends \MySqliWrapper\Query
      * If the first parameter is false, the Closure will not be executed.
      * You may pass another Closure as the third parameter to the when method.
      * This Closure will execute if the first parameter evaluates as false. 
-     * 
+     *
      * @param bool     $value
      * @param \closure $true
      * @param \closure $false
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function when($value, $true, $false = null)
@@ -405,11 +405,11 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Adds an ON clause.
-     * 
+     *
      * @param string $property
      * @param string $operator
      * @param string $value
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function on($property, $operator, $value)
@@ -419,10 +419,10 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Order the results by the specified column.
-     * 
+     *
      * @param string $column
      * @param string $direction
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function orderBy($column, $direction = 'ASC')
@@ -432,9 +432,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Offset the results returned.
-     * 
+     *
      * @param int $offset
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function offset($offset)
@@ -444,9 +444,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Offset the results returned.
-     * 
+     *
      * @param int $offset
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function skip($offset)
@@ -456,9 +456,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Limit the number of results.
-     * 
+     *
      * @param int $limit
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function limit($limit)
@@ -468,9 +468,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Limit the number of results.
-     * 
+     *
      * @param int $limit
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function take($limit)
@@ -480,9 +480,9 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Retrieves all models matching the select query.
-     * 
+     *
      * @param string $modelClass
-     * 
+     *
      * @return \MySqliWrapper\Model[]
      */
     public function get($modelClass = \MySqliWrapper\Model::class)
@@ -516,7 +516,7 @@ class QueryBuilder extends \MySqliWrapper\Query
 
     /**
      * Retrieves the first model matching the select query.
-     * 
+     *
      * @return \MySqliWrapper\Model|null
      */
     public function first()

@@ -72,6 +72,8 @@ final class MySqlConnection
 
     /**
      * The name of this Connection in the DataBase connections.
+     *
+     * @var string
      */
     public $name = null;
 
@@ -108,10 +110,10 @@ final class MySqlConnection
 
     /**
      * Executes a Query.
-     * 
+     *
      * @param \MySqliWrapper\Query $query
      * @param bool                 $return
-     * 
+     *
      * @return ResultSet
      * @throws \Exception
      */
@@ -147,7 +149,7 @@ final class MySqlConnection
 
     /**
      * Retrieve the last insert ID.
-     * 
+     *
      * @return int
      */
     public function lastInsertId()
@@ -159,7 +161,7 @@ final class MySqlConnection
      * Escapes a string for sql injection.
      *
      * @param string $str
-     * 
+     *
      * @return string
      */
     public function escapeString($str)
@@ -336,7 +338,7 @@ final class MySqlConnection
 
     /**
      * Retrieve an instance of a Model based on a table.
-     * 
+     *
      * @return \MySqliWrapper\Model
      */
     public function model($table, $config = []) {
@@ -345,7 +347,7 @@ final class MySqlConnection
 
     /**
      * Retrieve a Query builder object for the specified table.
-     * 
+     *
      * @return \MySqliWrapper\QueryBuilder
      */
     public function table($table, $config = [])
