@@ -2,15 +2,8 @@
 
 namespace MySqliWrapper;
 
-class QueryBuilder
+class QueryBuilder extends \MySqliWrapper\Query
 {
-    /**
-     * The name of the connection to use.
-     * 
-     * @var string $connection
-     */
-    protected $connection;
-
     /**
      * The table on which to be building this query.
      * 
@@ -26,27 +19,6 @@ class QueryBuilder
     private $config;
 
     /**
-     * The query that will be executed.
-     * 
-     * @var string $query
-     */
-    private $query = '';
-
-    /**
-     * The bind type string.
-     * 
-     * @var string $bindStr
-     */
-    private $bindStr = '';
-
-    /**
-     * The bind values.
-     * 
-     * @var array $binds
-     */
-    private $binds = [];
-
-    /**
      * Construct the QueryBuilder.
      * 
      * @param string $connection
@@ -55,29 +27,9 @@ class QueryBuilder
      */
     public function __construct($connection, $table, $config = [])
     {
-        $this->connection = $connection;
+        parent::__construct($connection);
         $this->table = $table;
         $this->config = $config;
-    }
-
-    /**
-     * Set the current query.
-     * 
-     * @param string $query
-     */
-    public function raw($query)
-    {
-        $this->query = $query;
-    }
-
-    /**
-     * Append to the current query.
-     * 
-     * @param string $query
-     */
-    public function appendRaw($query)
-    {
-        $this->query .= $query.PHP_EOL;
     }
 
     /**
@@ -87,9 +39,7 @@ class QueryBuilder
      */
     public function delete()
     {
-        $this->query .= "DELETE FROM `$this->table`".PHP_EOL;
-
-        return $this;
+        return $this->raw("DELETE FROM `$this->table`".PHP_EOL);
     }
 
     /**
@@ -101,7 +51,7 @@ class QueryBuilder
      */
     public function insert($data)
     {
-        $this->query .= "INSERT INTO `$this->table`".PHP_EOL;
+        $query = "INSERT INTO `$this->table`".PHP_EOL;
 
         $propResult = '(';
         $valResult = '(';
@@ -114,23 +64,24 @@ class QueryBuilder
             $valResult .= ($valResult == '(')
                 ? "?"
                 : ",?";
-            $this->binds[] = $value;
-            $this->bindStr .= mysqliwrapper__asQueryBindType($value);
+            $this->withQueryParameter($value);
         }
         $propResult .= ')';
         $valResult .= ')';
 
-        $this->query .= "$propResult".PHP_EOL."VALUES $valResult".PHP_EOL;
+        $query .= "$propResult".PHP_EOL."VALUES $valResult".PHP_EOL;
 
-        return $this;
+        return $this->raw($query);
     }
 
     /**
      * Retrieve the last insert ID from this QueryBuilders Connection object.
+     * 
+     * @return int
      */
     public function lastInsertId()
     {
-        return \MySqliWrapper\ConnectionManager::get($this->connection)->lastInsertId();
+        return \MySqliWrapper\DataBase::get($this->connection)->lastInsertId();
     }
 
     /**
@@ -142,7 +93,7 @@ class QueryBuilder
      */
     public function update($data)
     {
-        $this->query = "UPDATE `$this->table` SET".PHP_EOL;
+        $query = "UPDATE `$this->table` SET".PHP_EOL;
 
         $result = '';
         foreach ($data as $property => $value) {
@@ -150,13 +101,37 @@ class QueryBuilder
                 ? "$property = ?"
                 : ",$property = ?";
             
-            $this->binds[] = $value;
-            $this->bindStr .= mysqliwrapper__asQueryBindType($value);
+            $this->withQueryParameter($value);
         }
 
-        $this->query .= $result.PHP_EOL;
+        $query .= $result.PHP_EOL;
 
-        return $this;
+        return $this->raw($query);
+    }
+
+    /**
+     * Increment a column by a given amount and
+     * optionally update other columns as well.
+     * 
+     * @param string $column
+     * @param int    $amount
+     * @param array  $update
+     * 
+     * @return \MySqliWrapper\QueryBuilder
+     */
+    public function increment($column, $amount = 1, $update = [])
+    {
+        $query .= "UPDATE `$this->table` SET".PHP_EOL;
+        $result = "$column = $column + ?";
+        $this->withQueryParameter($amount);
+        foreach ($update as $property => $value)
+        {
+            $result .= ",$property = ?";
+            $this->withQueryParameter($value);
+        }
+        $query .= $result.PHP_EOL;
+
+        return $this->raw($query);
     }
 
     /**
@@ -168,11 +143,9 @@ class QueryBuilder
      */
     public function select($what = '*')
     {
-        $this->query .= 'SELECT '.PHP_EOL.
+        return $this->raw('SELECT'.PHP_EOL.
                         mysqliwrapper__selectableToString($what).PHP_EOL.
-                        "FROM `$this->table`".PHP_EOL;
-
-        return $this;
+                        "FROM `$this->table`".PHP_EOL);
     }
 
     /**
@@ -189,11 +162,10 @@ class QueryBuilder
      */
     public function whereExists($closure)
     {
-        $this->query .= 'WHERE EXISTS ( '.PHP_EOL;
+        $this->raw('WHERE EXISTS ( '.PHP_EOL);
         $closure($this);
-        $this->query .= ')'.PHP_EOL;
 
-        return $this;
+        return $this->raw(')'.PHP_EOL);
     }
 
     /**
@@ -207,11 +179,9 @@ class QueryBuilder
      */
     public function where($property, $operator, $value)
     {
-        $this->query .= "WHERE $property $operator ?".PHP_EOL;
-        $this->binds[] = $value;
-        $this->bindStr .= mysqliwrapper__asQueryBindType($value);
+        $this->withQueryParameter($value);
 
-        return $this;
+        return $this->raw("WHERE $property $operator ?".PHP_EOL);
     }
 
     /**
@@ -225,11 +195,9 @@ class QueryBuilder
      */
     public function or($property, $operator, $value)
     {
-        $this->query .= "OR $property $operator ?".PHP_EOL;
-        $this->binds[] = $value;
-        $this->bindStr .= mysqliwrapper__asQueryBindType($value);
+        $this->withQueryParameter($value);
 
-        return $this;
+        return $this->raw("OR $property $operator ?".PHP_EOL);
     }
 
     /**
@@ -243,11 +211,9 @@ class QueryBuilder
      */
     public function and($property, $operator, $value)
     {
-        $this->query .= "AND $property $operator ?".PHP_EOL;
-        $this->binds[] = $value;
-        $this->bindStr .= mysqliwrapper__asQueryBindType($value);
+        $this->withQueryParameter($value);
 
-        return $this;
+        return $this->raw("AND $property $operator ?".PHP_EOL);
     }
 
     /**
@@ -260,7 +226,7 @@ class QueryBuilder
      */
     public function join($table, $join)
     {
-        $this->query .= "JOIN `$table`".PHP_EOL;
+        $this->raw("JOIN `$table`".PHP_EOL);
         $join($this);
 
         return $this;
@@ -276,7 +242,7 @@ class QueryBuilder
      */
     public function outerJoin($table, $join)
     {
-        $this->query .= "OUTER JOIN `$table`".PHP_EOL;
+        $this->raw("OUTER JOIN `$table`".PHP_EOL);
         $join($this);
 
         return $this;
@@ -292,7 +258,7 @@ class QueryBuilder
      */
     public function innerJoin($table, $join)
     {
-        $this->query .= "INNER JOIN `$table`".PHP_EOL;
+        $this->raw("INNER JOIN `$table`".PHP_EOL);
         $join($this);
 
         return $this;
@@ -308,7 +274,7 @@ class QueryBuilder
      */
     public function leftJoin($table, $join)
     {
-        $this->query .= "LEFT JOIN `$table`".PHP_EOL;
+        $this->raw("LEFT JOIN `$table`".PHP_EOL);
         $join($this);
 
         return $this;
@@ -324,7 +290,7 @@ class QueryBuilder
      */
     public function leftOuterJoin($table, $join)
     {
-        $this->query .= "LEFT OUTER JOIN `$table`".PHP_EOL;
+        $this->raw("LEFT OUTER JOIN `$table`".PHP_EOL);
         $join($this);
 
         return $this;
@@ -340,7 +306,7 @@ class QueryBuilder
      */
     public function rightJoin($table, $join)
     {
-        $this->query .= "RIGHT JOIN `$table`".PHP_EOL;
+        $this->raw("RIGHT JOIN `$table`".PHP_EOL);
         $join($this);
 
         return $this;
@@ -356,7 +322,7 @@ class QueryBuilder
      */
     public function rightOuterJoin($table, $join)
     {
-        $this->query .= "RIGHT OUTER JOIN `$table`".PHP_EOL;
+        $this->raw("RIGHT OUTER JOIN `$table`".PHP_EOL);
         $join($this);
 
         return $this;
@@ -371,9 +337,7 @@ class QueryBuilder
      */
     public function crossJoin($table)
     {
-        $this->query .= "CROSS JOIN `$table`".PHP_EOL;
-
-        return $this;
+        return $this->raw("CROSS JOIN `$table`".PHP_EOL);
     }
 
     /**
@@ -385,9 +349,7 @@ class QueryBuilder
      */
     public function whereRaw($where)
     {
-        $this->query .= "WHERE $where".PHP_EOL;
-
-        return $this;
+        return $this->raw("WHERE $where".PHP_EOL);
     }
 
     /**
@@ -399,9 +361,7 @@ class QueryBuilder
      */
     public function orRaw($where)
     {
-        $this->query .= "OR $where".PHP_EOL;
-
-        return $this;
+        return $this->raw("OR $where".PHP_EOL);
     }
 
     /**
@@ -413,9 +373,7 @@ class QueryBuilder
      */
     public function andRaw($where)
     {
-        $this->query .= "AND $where".PHP_EOL;
-
-        return $this;
+        return $this->raw("AND $where".PHP_EOL);
     }
 
     /**
@@ -456,9 +414,7 @@ class QueryBuilder
      */
     public function on($property, $operator, $value)
     {
-        $this->query .= "ON $property $operator $value".PHP_EOL;
-
-        return $this;
+        return $this->raw("ON $property $operator $value".PHP_EOL);
     }
 
     /**
@@ -471,9 +427,7 @@ class QueryBuilder
      */
     public function orderBy($column, $direction = 'ASC')
     {
-        $this->query .= "ORDER BY $column $direction".PHP_EOL;
-
-        return $this;
+        return $this->raw("ORDER BY $column $direction".PHP_EOL);
     }
 
     /**
@@ -485,9 +439,7 @@ class QueryBuilder
      */
     public function offset($offset)
     {
-        $this->query .= "OFFSET $offset".PHP_EOL;
-
-        return $this;
+        return $this->raw("OFFSET $offset".PHP_EOL);
     }
 
     /**
@@ -511,9 +463,7 @@ class QueryBuilder
      */
     public function limit($limit)
     {
-        $this->query .= "LIMIT $limit".PHP_EOL;
-
-        return $this;
+        return $this->raw("LIMIT $limit".PHP_EOL);
     }
 
     /**
@@ -526,28 +476,6 @@ class QueryBuilder
     public function take($limit)
     {
         return $this->limit($limit);
-    }
-
-    /**
-     * Execute the query built by this QueryBuilder.
-     * 
-     * @param bool $return
-     * 
-     * @return mixed
-     */
-    public function execute($return = false)
-    {
-        $binds = $this->binds;
-        array_unshift($binds, $this->bindStr);
-        $results = \MySqliWrapper\ConnectionManager::get(
-            $this->connection
-        )->executeSql(
-            $this->query,
-            $binds,
-            $return
-        );
-
-        return $results;
     }
 
     /**
@@ -601,37 +529,15 @@ class QueryBuilder
     }
 
     /**
-     * Retrieves an array of rows.
-     * 
-     * @return arrray
+     * Handle the debug print for this object.
      */
-    public function fetch()
-    {
-        return $this->execute(true);
-    }
-
-    /**
-     * Retrieves the first row.
-     * 
-     * @return arrray|null
-     */
-    public function fetchFirst()
-    {
-        $all = $this->execute(true);
-
-        if (sizeof($all) > 0)
-            return $all[0];
-
-        return null;
-    }
-
-    /**
-     * Retrieve the raw query.
-     * 
-     * @return string
-     */
-    public function getRawQuery()
-    {
-        return $this->query;
+    public function __debugInfo() {
+        return [
+            'query' => $this->getRawQuery(false),
+            'bind_types' => $this->getBindTypes(),
+            'binds' => $this->getBinds(false),
+            'connection' => $this->connection,
+            'table' => $this->table,
+        ];
     }
 }

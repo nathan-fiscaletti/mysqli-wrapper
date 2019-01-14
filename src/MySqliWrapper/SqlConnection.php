@@ -71,7 +71,7 @@ final class SqlConnection
     private $port;
 
     /**
-     * The name of this Connection in the ConnectionManager.
+     * The name of this Connection in the DataBase connections.
      */
     public $name = null;
 
@@ -107,7 +107,21 @@ final class SqlConnection
     }
 
     /**
-     * Executes a query in sql.
+     * Executes a Query.
+     * 
+     * @param \MySqliWrapper\Query $query
+     * @param bool                 $return
+     * 
+     * @return ResultSet
+     * @throws \Exception
+     */
+    public function execute($query, $return = false)
+    {
+        $this->executeSql($query->getRawQuery(), $query->getBinds(), $return);
+    }
+
+    /**
+     * Executes a raw query.
      *
      * @param string  $query
      * @param array   $binds
