@@ -1,9 +1,9 @@
-# Mysqli Wrapper
+# MySqli Wrapper
 
 ### A simple ORM for MySql and PHP.
 
 > composer require nafisc/mysqli-wrapper
 
-Latest Version: v1.7
+## How to use?
 
-## Examples coming soon!
+See [the Wiki](https://github.com/nathan-fiscaletti/mysqli-wrapper/wiki) for information on how to use MySqli Wrapper!
