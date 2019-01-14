@@ -36,7 +36,7 @@ final class DataBase
     public static function get($name)
     {
         if (! isset(self::$connections[$name])) {
-            return null;
+            return;
         }
 
         return self::$connections[$name];
