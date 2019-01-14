@@ -1,6 +1,6 @@
 {
     "name": "nafisc/mysqli-wrapper",
-    "description": "A wrapper class for MySqli connections",
+    "description": "A simple ORM for MySql and PHP",
     "type": "library",
     "license": "MIT",
     "authors": [
