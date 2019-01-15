@@ -92,13 +92,13 @@ final class MySqlConnection
     public function __construct(
         $config
     ) {
-        $this->host     = $config['host'];
+        $this->host = $config['host'];
         $this->username = $config['username'];
         $this->password = $config['password'];
         $this->database = $config['database'];
-        $this->port     = $config['port'];
-        $this->charset  = $config['charset'];
-        $this->name     = $config['name'];
+        $this->port = $config['port'];
+        $this->charset = $config['charset'];
+        $this->name = $config['name'];
     }
 
     /**
