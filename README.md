@@ -20,14 +20,15 @@ use \MySqliWrapper\DataBase as DB;
 use \MySqliWrapper\MySqlConnection as Connection;
 
 DB::register(
-    'main',
-    new Connection(
-        'localhost',
-        'username',
-        'password',
-        'database',
-        3306
-    )
+    [
+        'name'     => 'main', 
+        'host'     => 'localhost',
+        'username' => 'root',
+        'password' => 'password',
+        'database' => 'database',
+        'port'     => 3306,
+        'charset'  => 'utf8',
+    ]
 );
 
 $user = DB::get('main')
