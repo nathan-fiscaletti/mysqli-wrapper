@@ -205,6 +205,7 @@ final class MySqlConnection
 
         if ($this->sql->connect_errno) {
             $this->sql = null;
+
             return false;
         }
 
@@ -212,6 +213,7 @@ final class MySqlConnection
 
         if ($this->sql->connect_errno) {
             $this->sql = null;
+
             return false;
         }
 
