@@ -14,16 +14,12 @@ final class DataBase
     /**
      * Register a connection.
      *
-     * @param string                         $name
-     * @param \MySqliWrapper\MySqlConnection $connection
+     * @param array $connection
      */
-    public static function register($name, $connection)
+    public static function register($config)
     {
-        if (! ($connection instanceof \MySqliWrapper\MySqlConnection)) {
-            throw new \Exception('Type is not \MySqliWrapper\MySqlConnection');
-        }
-        $connection->name = $name;
-        self::$connections[$name] = $connection;
+        $connection = new \MySqliWrapper\MySqlConnection($config);
+        self::$connections[$config['name']] = $connection;
     }
 
     /**
