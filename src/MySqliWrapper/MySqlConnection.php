@@ -71,6 +71,13 @@ final class MySqlConnection
     private $port;
 
     /**
+     * Connection charset.
+     *
+     * @var string
+     */
+    private $charset = 'utf8';
+
+    /**
      * The name of this Connection in the DataBase connections.
      *
      * @var string
@@ -80,24 +87,18 @@ final class MySqlConnection
     /**
      * Create a new MySqlConnection instance.
      *
-     * @param string  $host
-     * @param string  $username
-     * @param string  $password
-     * @param string  $database
-     * @param int $port
+     * @param array $config
      */
     public function __construct(
-        $host = null,
-        $username = null,
-        $password = null,
-        $database = null,
-        $port = null
+        $config
     ) {
-        $this->host = $host;
-        $this->username = $username;
-        $this->password = $password;
-        $this->database = $database;
-        $this->port = $port;
+        $this->host     = $config['host'];
+        $this->username = $config['username'];
+        $this->password = $config['password'];
+        $this->database = $config['database'];
+        $this->port     = $config['port'];
+        $this->charset  = $config['charset'];
+        $this->name     = $config['name'];
     }
 
     /**
@@ -119,7 +120,7 @@ final class MySqlConnection
      */
     public function execute($query, $return = false)
     {
-        $this->executeSql($query->getRawQuery(), $query->getBinds(), $return);
+        return $this->executeSql($query->getRawQuery(), $query->getBinds(), $return);
     }
 
     /**
@@ -201,14 +202,22 @@ final class MySqlConnection
             $this->database,
             $this->port
         );
+
         if ($this->sql->connect_errno) {
             $this->sql = null;
-        } else {
-            $this->is_open = true;
-            $ret = true;
+            return false;
         }
 
-        return $ret;
+        $this->sql->set_charset($this->charset);
+
+        if ($this->sql->connect_errno) {
+            $this->sql = null;
+            return false;
+        }
+
+        $this->is_open = true;
+
+        return true;
     }
 
     /**

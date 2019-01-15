@@ -489,24 +489,26 @@ class QueryBuilder extends \MySqliWrapper\Query
 
         $models = [];
 
-        foreach ($results as $result) {
-            if ($this instanceof \MySqliWrapper\Model) {
-                $modelClass = get_called_class();
+        if (count($results) > 0) {
+            foreach ($results as $result) {
+                if ($this instanceof \MySqliWrapper\Model) {
+                    $modelClass = get_called_class();
+                }
+                $model = new $modelClass(
+                    $this->connection,
+                    $this->table,
+                    array_merge(
+                        ['data' => $result],
+                        $this->config
+                    )
+                );
+                if ($model->dataExists($model->id_column)) {
+                    $model->id = $model->dataFor($model->id_column, false);
+                } else {
+                    $model->savable(false);
+                }
+                $models[] = $model;
             }
-            $model = new $modelClass(
-                $this->connection,
-                $this->table,
-                array_merge(
-                    ['data' => $result],
-                    $this->config
-                )
-            );
-            if ($model->dataExists($model->id_column)) {
-                $model->id = $model->dataFor($model->id_column, false);
-            } else {
-                $model->savable(false);
-            }
-            $models[] = $model;
         }
 
         return $models;
