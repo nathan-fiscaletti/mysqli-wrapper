@@ -1,6 +1,6 @@
 # MySqli Wrapper
 
-### A simple ORM for MySql and PHP.
+### A simple [ORM](https://en.wikipedia.org/wiki/Object-relational_mapping) for MySql and PHP.
 
 > composer require nafisc/mysqli-wrapper
 
