@@ -15,28 +15,26 @@
 See [the Wiki](https://github.com/nathan-fiscaletti/mysqli-wrapper/wiki) for information on how to use MySqli Wrapper!
 
 ```php
+    use \MySqliWrapper\DataBase as DB;
+    use \MySqliWrapper\MySqlConnection as Connection;
 
-use \MySqliWrapper\DataBase as DB;
-use \MySqliWrapper\MySqlConnection as Connection;
+    DB::register(
+        [
+            'name'     => 'main', 
+            'host'     => 'localhost',
+            'username' => 'root',
+            'password' => 'password',
+            'database' => 'database',
+            'port'     => 3306,
+            'charset'  => 'utf8',
+        ]
+    );
 
-DB::register(
-    [
-        'name'     => 'main', 
-        'host'     => 'localhost',
-        'username' => 'root',
-        'password' => 'password',
-        'database' => 'database',
-        'port'     => 3306,
-        'charset'  => 'utf8',
-    ]
-);
-
-$user = DB::get('main')
+    $user = DB::get('main')
             ->table('users')
             ->where('name', '=', 'Nathan')
             ->getFirst();
 
-$user->age = 10;
-$user->save();
-
+    $user->age = 10;
+    $user->save();
 ```
