@@ -160,7 +160,7 @@ class QueryBuilder extends \MySqliWrapper\Query
      */
     public function whereExists($closure)
     {
-        $this->raw('WHERE EXISTS ( '.PHP_EOL);
+        $this->raw('WHERE EXISTS ('.PHP_EOL);
         $closure($this);
 
         return $this->raw(')'.PHP_EOL);
@@ -191,7 +191,7 @@ class QueryBuilder extends \MySqliWrapper\Query
      *
      * @return \MySqliWrapper\QueryBuilder
      */
-    public function or($property, $operator, $value)
+    public function orWhere($property, $operator, $value)
     {
         $this->withQueryParameter($value);
 
@@ -207,7 +207,7 @@ class QueryBuilder extends \MySqliWrapper\Query
      *
      * @return \MySqliWrapper\QueryBuilder
      */
-    public function and($property, $operator, $value)
+    public function andWhere($property, $operator, $value)
     {
         $this->withQueryParameter($value);
 
