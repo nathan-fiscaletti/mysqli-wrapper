@@ -18,7 +18,6 @@ See [the Wiki](https://github.com/nathan-fiscaletti/mysqli-wrapper/wiki) for inf
 
 ```php
     use \MySqliWrapper\DataBase as DB;
-    use \MySqliWrapper\MySqlConnection as Connection;
 
     DB::register(
         [
