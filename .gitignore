@@ -2,3 +2,4 @@ vendor
 composer.lock
 Test.php
 test.php
+.vagrant

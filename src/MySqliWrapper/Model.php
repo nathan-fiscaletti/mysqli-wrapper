@@ -2,7 +2,9 @@
 
 namespace MySqliWrapper;
 
-class Model
+use MySqliWrapper\QueryBuilder;
+
+class Model extends QueryBuilder
 {
     /**
      * The data.
@@ -89,20 +91,6 @@ class Model
     }
 
     /**
-     * Retrieve a QueryBuilder for the Model.
-     *
-     * @return \MySqliWrapper\QueryBuilder
-     */
-    private function queryBuilder()
-    {
-        return new \MySqliWrapper\QueryBuilder(
-            $this->connection,
-            $this->table,
-            $this->config
-        );
-    }
-
-    /**
      * Set whether or not this instance is Savable.
      *
      * @param bool $value
@@ -124,18 +112,20 @@ class Model
         }
 
         if ($this->saved()) {
-            return
-                $this->update($this->data)
-                    ->where($this->id_column, '=', $this->id)
-                    ->execute();
+            $result = $this->update($this->data)
+                           ->where($this->$column_prefix.$this->id_column, '=', $this->id)
+                           ->execute();
+            $this->reset();
+            return $result;
         } else {
             if ($this->insert($this->data)->execute()) {
                 $this->id = $this->lastInsertId();
-
+                $this->reset();
                 return true;
             }
         }
 
+        $this->reset();
         return false;
     }
 
@@ -163,6 +153,17 @@ class Model
     }
 
     /**
+     * Set the value for a column.
+     * 
+     * @param string $column
+     * @param mixed  $value
+     * @param bool   $withPrefix
+     */
+    public function setProperty($column, $value, $withPrefix = true) {
+        $this->data[($withPrefix ? $this->column_prefix : '').$column] = $value;
+    }
+
+    /**
      * Check if a column exists.
      *
      * @param string $column
@@ -176,31 +177,27 @@ class Model
     }
 
     /**
-     * Used for forwarding QueryBuilder functions to this Models QueryBuilder.
-     *
-     * @param string $function
-     * @param array  $parameters
-     *
-     * @return mixed
+     * Retrieve all instances of this Model.
      */
-    public static function __callStatic($function, $parameters)
-    {
+    public static function all() {
         $class = get_called_class();
 
-        return (new $class())->{$function}(...$parameters);
+        return (new $class())->select();
     }
 
     /**
-     * Used for forwarding QueryBuilder functions to this Models QueryBuilder.
-     *
-     * @param string $function
-     * @param array  $parameters
-     *
-     * @return mixed
+     * Find all instances of this Model matching the specified criteria.
+     * 
+     * @param $property
+     * @param $operator
+     * @param $value
+     * 
+     * @return \MySqliWrapper\Model
      */
-    public function __call($function, $parameters)
-    {
-        return $this->queryBuilder()->{$function}(...$parameters);
+    public static function find($property, $operator, $value) {
+        $class = get_called_class();
+
+        return (new $class())->select()->where($property, $operator, $value);
     }
 
     /**
@@ -213,7 +210,7 @@ class Model
      */
     public function __set($property, $value)
     {
-        $this->data[$this->column_prefix.$property] = $value;
+        $this->setProperty($property, $value);
     }
 
     /**
@@ -225,6 +222,26 @@ class Model
      */
     public function __get($property)
     {
-        return $this->data[$this->column_prefix.$property];
+        return $this->dataFor($property);
+    }
+
+    /**
+     * Handle the debug print for this Model.
+     */
+    public function __debugInfo()
+    {
+        $properties = [];
+        foreach ($this->data as $key => $val) {
+            $properties[str_replace($this->column_prefix, '', $key)] = $val;
+        }
+
+        return array_merge([
+            'id' => $this->id,
+            'connection' => $this->connection,
+            'table' => $this->table,
+            'column_prefix' => $this->column_prefix,
+            'id_column' => $this->id_column,
+            'savable' => $this->savable,
+        ], $properties);
     }
 }
