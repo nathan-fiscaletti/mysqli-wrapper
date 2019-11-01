@@ -12,24 +12,15 @@ class QueryBuilder extends \MySqliWrapper\Query
     protected $table;
 
     /**
-     * The configuration to pass to any generated models.
-     *
-     * @var array
-     */
-    private $config;
-
-    /**
      * Construct the QueryBuilder.
      *
      * @param string $connection
      * @param string $table
-     * @param array  $config
      */
-    public function __construct($connection, $table, $config = [])
+    public function __construct($connection, $table)
     {
         parent::__construct($connection);
         $this->table = $table;
-        $this->config = $config;
     }
 
     /**
@@ -80,7 +71,7 @@ class QueryBuilder extends \MySqliWrapper\Query
      */
     public function lastInsertId()
     {
-        return \MySqliWrapper\DataBase::get($this->connection)->lastInsertId();
+        return \MySqliWrapper\Database::get($this->connection)->lastInsertId();
     }
 
     /**
@@ -142,8 +133,8 @@ class QueryBuilder extends \MySqliWrapper\Query
     public function select($what = '*')
     {
         return $this->raw('SELECT'.PHP_EOL.
-                        mysqliwrapper__selectableToString($what).PHP_EOL.
-                        "FROM `$this->table`".PHP_EOL);
+                      mysqliwrapper__selectableToString($what).PHP_EOL.
+                      "FROM `$this->table`".PHP_EOL);
     }
 
     /**
@@ -497,13 +488,10 @@ class QueryBuilder extends \MySqliWrapper\Query
                 $model = new $modelClass(
                     $this->connection,
                     $this->table,
-                    array_merge(
-                        ['data' => $result],
-                        $this->config
-                    )
+                    ['data' => $result]
                 );
                 if ($model->dataExists($model->id_column)) {
-                    $model->id = $model->dataFor($model->id_column, false);
+                    $model->id = $model->dataFor($model->id_column, true);
                 } else {
                     $model->savable(false);
                 }
@@ -525,6 +513,8 @@ class QueryBuilder extends \MySqliWrapper\Query
         if (count($all) > 0) {
             return $all[0];
         }
+
+        return null;
     }
 
     /**
