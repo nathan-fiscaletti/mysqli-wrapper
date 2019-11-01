@@ -2,7 +2,7 @@
 
 namespace MySqliWrapper;
 
-final class DataBase
+final class Database
 {
     /**
      * The connections currently active.

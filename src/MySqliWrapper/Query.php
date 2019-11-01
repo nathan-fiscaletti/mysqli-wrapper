@@ -43,6 +43,16 @@ class Query
     }
 
     /**
+     * Empty out the Query for re-use of the Query object.
+     */
+    public function reset()
+    {
+        $this->query = '';
+        $this->binds = [];
+        $this->bindTypes = '';
+    }
+
+    /**
      * Append to or set the Query.
      *
      * @param string $query
@@ -86,7 +96,7 @@ class Query
     public function withQueryParameters($parameters)
     {
         foreach ($parameters as $parameter) {
-            $this->binds[] = \MySqliWrapper\DataBase::get($this->connection)->escapeString($parameter);
+            $this->binds[] = \MySqliWrapper\Database::get($this->connection)->escapeString($parameter);
             $this->bindTypes .= mysqliwrapper__asQueryBindType($parameter);
         }
 
@@ -120,7 +130,9 @@ class Query
     {
         $binds = $this->binds;
         if ($withBindTypes) {
-            array_unshift($binds, $this->bindTypes);
+            if (count($binds) > 0) {
+                array_unshift($binds, $this->bindTypes);
+            }
         }
 
         return $binds;
@@ -145,9 +157,7 @@ class Query
      */
     public function execute($return = false)
     {
-        $binds = $this->binds;
-        array_unshift($binds, $this->bindTypes);
-        $results = \MySqliWrapper\DataBase::get(
+        $results = \MySqliWrapper\Database::get(
             $this->connection
         )->execute(
             $this, $return

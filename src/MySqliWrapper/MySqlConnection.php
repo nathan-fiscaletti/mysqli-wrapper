@@ -78,7 +78,7 @@ final class MySqlConnection
     private $charset = 'utf8';
 
     /**
-     * The name of this Connection in the DataBase connections.
+     * The name of this Connection in the Database connections.
      *
      * @var string
      */

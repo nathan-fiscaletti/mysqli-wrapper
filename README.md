@@ -12,12 +12,12 @@
 
 ## How to use?
 
-See [the Wiki](https://github.com/nathan-fiscaletti/mysqli-wrapper/wiki) for information on how to use MySqli Wrapper!
+See [the documentation](./docs) for information on how to use MySqli Wrapper!
 
 ## Quick Example
 
 ```php
-    use \MySqliWrapper\DataBase as DB;
+    use \MySqliWrapper\Database as DB;
 
     DB::register(
         [
@@ -34,7 +34,7 @@ See [the Wiki](https://github.com/nathan-fiscaletti/mysqli-wrapper/wiki) for inf
     $user = DB::get('main')
             ->table('users')
             ->where('name', '=', 'Nathan')
-            ->getFirst();
+            ->first();
 
     $user->age = 10;
     $user->save();
