@@ -513,8 +513,6 @@ class QueryBuilder extends \MySqliWrapper\Query
         if (count($all) > 0) {
             return $all[0];
         }
-
-        return null;
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace MySqliWrapper;
 
-use MySqliWrapper\QueryBuilder;
-
 class Model extends QueryBuilder
 {
     /**
@@ -116,16 +114,19 @@ class Model extends QueryBuilder
                            ->where($this->$column_prefix.$this->id_column, '=', $this->id)
                            ->execute();
             $this->reset();
+
             return $result;
         } else {
             if ($this->insert($this->data)->execute()) {
                 $this->id = $this->lastInsertId();
                 $this->reset();
+
                 return true;
             }
         }
 
         $this->reset();
+
         return false;
     }
 
@@ -154,12 +155,13 @@ class Model extends QueryBuilder
 
     /**
      * Set the value for a column.
-     * 
+     *
      * @param string $column
      * @param mixed  $value
      * @param bool   $withPrefix
      */
-    public function setProperty($column, $value, $withPrefix = true) {
+    public function setProperty($column, $value, $withPrefix = true)
+    {
         $this->data[($withPrefix ? $this->column_prefix : '').$column] = $value;
     }
 
@@ -179,7 +181,8 @@ class Model extends QueryBuilder
     /**
      * Retrieve all instances of this Model.
      */
-    public static function all() {
+    public static function all()
+    {
         $class = get_called_class();
 
         return (new $class())->select();
@@ -187,14 +190,15 @@ class Model extends QueryBuilder
 
     /**
      * Find all instances of this Model matching the specified criteria.
-     * 
+     *
      * @param $property
      * @param $operator
      * @param $value
-     * 
+     *
      * @return \MySqliWrapper\Model
      */
-    public static function find($property, $operator, $value) {
+    public static function find($property, $operator, $value)
+    {
         $class = get_called_class();
 
         return (new $class())->select()->where($property, $operator, $value);
