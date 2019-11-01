@@ -45,7 +45,8 @@ class Query
     /**
      * Empty out the Query for re-use of the Query object.
      */
-    public function reset() {
+    public function reset()
+    {
         $this->query = '';
         $this->binds = [];
         $this->bindTypes = '';
