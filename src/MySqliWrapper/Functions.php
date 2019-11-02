@@ -38,7 +38,7 @@ if (! function_exists('mysqliwrapper__selectableToString')) {
     function mysqliwrapper__selectableToString($what)
     {
         if (is_array($what)) {
-            return implode(','.PHP_EOL, $what);
+            return "`".implode('`, `', $what)."`";
         }
 
         return $what;
