@@ -52,6 +52,8 @@ $connection->execute($query, true);
 
 With a QueryBuilder you still have access to all of the same features as a Query, however you are now provided with functions for generating the query itself.
 
+You can retrieve a query builder using `$connection->table('sometable')`. You can then start building your query with this object.
+
 The following code demonstrates a simple example of the same query as above, but using a QueryBuilder instead.
 
 ```php
@@ -61,26 +63,190 @@ $connection->table('users')
            ->fetchFirst();
 ```
 
-> See [QueryBuilder](../src/MySqliWrapper/QueryBuilder.php) for a list of all functions provided by the QueryBuilder.
-
 **When using a QueryBuilder, there are two more functions added for retrieving the result.**
 
 They can be used as follows: 
 
 1. Retrieve an instance of [\MySqliWrapper\Model](../src/MySqliWrapper/Model.php) for the Table.
 ```php
-$connection->table('users')
-           ->select('*')
-           ->where('user_id', 3)
-           ->first();
+$queryBuilder->first();
 ```
 
 2. Retrieve a list of instances of [\MySqliWrapper\Model](../src/MySqliWrapper/Model.php) for the Table.
 ```php
-$connection->table('users')
-           ->select('*')
-           ->where('user_id', 3)
-           ->get();
+$queryBuilder->get();
 ```
 
-> See [Models](./models.md).
+> You can also still use all of the functions that come from the `Query` class.
+
+## Using a QueryBuilder
+
+For each of the following examples; assume we have a Query Builder in the variable `$qb` that was created with the following code:
+
+```php
+$qb = $connection->table('people');
+```
+
+After you have finished building a Query using the Query Builder, you can execute it using one of the functions documented earlier on this page.
+
+> Including what's listed here, there are a lot of other use cases for the Query Builder. Look at the [`\MySqliWrapper\QueryBuilder`](../src/MySqliWrapper/QueryBuilder.php) class for a full list of these functions.
+
+### Inserting Data 
+
+- PHP
+
+   ```php
+   $qb->insert([
+       'name' => 'nathan', 
+       'age' => 24
+   ]);
+
+   echo $qb->getRawQuery();
+   ```
+
+- Results In
+
+   ```sql
+   INSERT INTO `people`
+   (`name`,`age`)
+   VALUES (?,?)
+   ```
+
+### Deleting Data
+
+- PHP
+
+   ```php
+   $qb->delete()
+      ->where('name', '=', 'nathan')
+      ->orWhere('age', '>', 5);
+
+   echo $qb->getRawQuery();
+   ```
+
+- Results In
+
+   ```sql
+   DELETE FROM `people`
+   WHERE `name` = ?
+   OR `age` > ?
+   ```
+
+### Updating Data
+
+- PHP
+
+   ```php
+   $qb->update([
+       'age' => 25,
+       'phone' => '1234567890',
+   ])->where('name', '=', 'John');
+
+   echo $qb->getRawQuery();
+   ```
+
+- Results In
+
+   ```sql
+   UPDATE `people` SET
+   `age` = ?,`phone` = ?
+   WHERE `name` = ?
+   ```
+
+### Incrementing a Column
+
+- PHP
+
+   ```php
+   $qb->increment('friends')
+      ->where('name', '=', 'john');
+
+   echo $qb->getRawQuery();
+   ```
+
+- Results In
+
+   ```sql
+   UPDATE `people` SET
+   `friends` = `friends` + ?
+   WHERE `name` = ?
+   ```
+
+- You can also
+
+   * Provide a number to increment by, by default this function will increment the number by `1`.
+   
+      ```php
+      $qb->increment('friends', 10);
+      ```
+
+   * Provider aditional `update` data
+
+      ```php
+      $qb->increment('friends', 10, ['age' => 25]);
+      ```
+
+### Retrieving Data
+
+- PHP
+
+   ```php
+   $qb->select(['name', 'age']);
+
+   echo $qb->getRawQuery();
+   ```
+
+- Results In
+
+   ```sql
+   SELECT
+   `name`, `age`
+   FROM `people`
+   ```
+
+- You can also
+
+   * Provide `'*'` instead of an array of elements to select.
+
+      ```php
+      $qb->select('*');
+      ```
+
+   * Provide a custom select string
+
+      ```php
+      $qb->select('`name`, `people.age` as years_old');
+      ```
+
+### Joining other Tables
+
+- PHP
+
+   ```php
+   $qb->select(['people.*', 'games.name'])
+      ->leftJoin('games', function($join) {
+          $join->on('games.id', '=', '`people.game_id`');
+      });
+
+   echo $qb->getRawQuery();
+   ```
+
+- Results In
+
+   ```sql
+   SELECT
+   `people.*`, `games.name`
+   FROM `people`
+   LEFT JOIN `games`
+   ON `games.id` = `people.game_id`
+   ```
+
+- You can also
+
+    * Normal `join` with `$qb->join($table, $join);`
+    * Outer `join` with `$qb->outerJoin($table, $join);`
+    * Inner `join` with `$qb->innerJoin($table, $join);`
+    * Left Outer `join` with `$qb->leftOuterJoin($table, $join);`
+    * Right `join` with `$qb->rightJoin($table, $join);`
+    * Right Outer `join` with `$qb->rightOuterJoin($table, $join);`
+    * Cross `join` with `$qb->crossJoin($table);`

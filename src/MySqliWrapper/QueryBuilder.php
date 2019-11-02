@@ -48,8 +48,8 @@ class QueryBuilder extends \MySqliWrapper\Query
         $valResult = '(';
         foreach ($data as $property => $value) {
             $propResult .= ($propResult == '(')
-                ? "$property"
-                : ",$property";
+                ? "`$property`"
+                : ",`$property`";
 
             $valResult .= ($valResult == '(')
                 ? '?'
@@ -88,8 +88,8 @@ class QueryBuilder extends \MySqliWrapper\Query
         $result = '';
         foreach ($data as $property => $value) {
             $result .= ($result == '')
-                ? "$property = ?"
-                : ",$property = ?";
+                ? "`$property` = ?"
+                : ",`$property` = ?";
 
             $this->withQueryParameter($value);
         }
@@ -111,11 +111,11 @@ class QueryBuilder extends \MySqliWrapper\Query
      */
     public function increment($column, $amount = 1, $update = [])
     {
-        $query .= "UPDATE `$this->table` SET".PHP_EOL;
-        $result = "$column = $column + ?";
+        $query = "UPDATE `$this->table` SET".PHP_EOL;
+        $result = "`$column` = `$column` + ?";
         $this->withQueryParameter($amount);
         foreach ($update as $property => $value) {
-            $result .= ",$property = ?";
+            $result .= ",`$property` = ?";
             $this->withQueryParameter($value);
         }
         $query .= $result.PHP_EOL;
@@ -170,7 +170,7 @@ class QueryBuilder extends \MySqliWrapper\Query
     {
         $this->withQueryParameter($value);
 
-        return $this->raw("WHERE $property $operator ?".PHP_EOL);
+        return $this->raw("WHERE `$property` $operator ?".PHP_EOL);
     }
 
     /**
@@ -186,7 +186,7 @@ class QueryBuilder extends \MySqliWrapper\Query
     {
         $this->withQueryParameter($value);
 
-        return $this->raw("OR $property $operator ?".PHP_EOL);
+        return $this->raw("OR `$property` $operator ?".PHP_EOL);
     }
 
     /**
@@ -202,7 +202,7 @@ class QueryBuilder extends \MySqliWrapper\Query
     {
         $this->withQueryParameter($value);
 
-        return $this->raw("AND $property $operator ?".PHP_EOL);
+        return $this->raw("AND `$property` $operator ?".PHP_EOL);
     }
 
     /**
@@ -403,7 +403,7 @@ class QueryBuilder extends \MySqliWrapper\Query
      */
     public function on($property, $operator, $value)
     {
-        return $this->raw("ON $property $operator $value".PHP_EOL);
+        return $this->raw("ON `$property` $operator $value".PHP_EOL);
     }
 
     /**
@@ -416,7 +416,7 @@ class QueryBuilder extends \MySqliWrapper\Query
      */
     public function orderBy($column, $direction = 'ASC')
     {
-        return $this->raw("ORDER BY $column $direction".PHP_EOL);
+        return $this->raw("ORDER BY `$column` $direction".PHP_EOL);
     }
 
     /**
